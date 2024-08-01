@@ -20,23 +20,28 @@ namespace MPL.Logging.Milestone.Api.Controllers
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public IEnumerable<WeatherForecast> Get([FromQuery]int days = 5)
     {
-      using (LogContext.PushProperty("LogType", "metier"))
+      if (_logger.IsEnabled(LogLevel.Information))
       {
-        _logger.LogInformation("Getting {WheatherCount} wheather scores", 5);
+        using (LogContext.PushProperty("LogType", "metier"))
+        {
+          _logger.LogInformation("Getting {WheatherCount} wheather scores", days);
+        }
       }
-      using (LogContext.PushProperty("LogType", "technique"))
-      {
-        _logger.LogInformation("Getting {WheatherCount} wheather scores", 5);
-      }
-      return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+      var result = Enumerable.Range(1, days).Select(index => new WeatherForecast
       {
         Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
         TemperatureC = Random.Shared.Next(-20, 55),
         Summary = Summaries[Random.Shared.Next(Summaries.Length)]
       })
       .ToArray();
+
+      if (_logger.IsEnabled(LogLevel.Debug))
+      {
+        _logger.LogDebug("Wheathers : {@WheatherList}", result);
+      }
+      return result;
     }
 
 

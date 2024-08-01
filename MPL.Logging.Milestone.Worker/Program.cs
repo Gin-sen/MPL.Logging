@@ -3,7 +3,7 @@ using MPL.Logging.Extensions;
 using MPL.Logging.Milestone.Worker;
 using Serilog;
 
-Log.Logger = CustomLoggerFactory.CreateLogger();
+Log.Logger = CustomLoggerFactory.CreateCustomBootstrapLogger();
 
 try
 {

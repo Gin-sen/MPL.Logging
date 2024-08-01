@@ -7,19 +7,6 @@ namespace MPL.Logging
 {
   public static class CustomLoggerFactory
   {
-    public static Serilog.Core.Logger CreateLogger()
-    {
-      return new LoggerConfiguration()
-        .Enrich.WithElasticApmCorrelationInfo()
-        .Enrich.FromLogContext()
-        .WriteTo.Console(new EcsTextFormatter(new EcsTextFormatterConfiguration
-        {
-          IncludeHost = false,
-          IncludeProcess = false,
-          IncludeUser = false,
-        }))
-        .CreateLogger();
-    }
     public static Serilog.Core.Logger CreateCustomLogger()
     {
       return new LoggerConfiguration()
@@ -33,6 +20,23 @@ namespace MPL.Logging
           IncludeUser = false,
         }))
         .CreateLogger();
+    }
+
+
+
+    public static Serilog.Extensions.Hosting.ReloadableLogger CreateCustomBootstrapLogger()
+    {
+      return new LoggerConfiguration()
+        .Enrich.WithElasticApmCorrelationInfo()
+        .Enrich.FromLogContext()
+        .Enrich.With(new TechnicalEnricher())
+        .WriteTo.Console(new EcsTextFormatter(new EcsTextFormatterConfiguration
+        {
+          IncludeHost = false,
+          IncludeProcess = false,
+          IncludeUser = false,
+        }))
+        .CreateBootstrapLogger();
     }
   }
 }

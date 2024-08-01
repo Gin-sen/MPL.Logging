@@ -1,10 +1,10 @@
 services:
   mpl.logging.milestone.api:
     environment:
+      - DOTNET_EnableDiagnostics=0
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__Storage=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://my-azurite:10000/devstoreaccount1;QueueEndpoint=http://my-azurite:10001/devstoreaccount1;TableEndpoint=http://my-azurite:10002/devstoreaccount1;
-
     ports:
       - "8080"
     volumes:
@@ -12,8 +12,11 @@ services:
 
   mpl.logging.milestone.worker:
     environment:
+      - DOTNET_EnableDiagnostics=0
       - DOTNET_ENVIRONMENT=Development
       - ConnectionStrings__Storage=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://my-azurite:10000/devstoreaccount1;QueueEndpoint=http://my-azurite:10001/devstoreaccount1;TableEndpoint=http://my-azurite:10002/devstoreaccount1;
+    ports:
+      - "8080"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
 

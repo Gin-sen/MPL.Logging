@@ -11,6 +11,5 @@ services:
       context: .
       dockerfile: MPL.Logging.Milestone.Worker/Dockerfile
 
-
   my-azurite:
     image: mcr.microsoft.com/azure-storage/azurite

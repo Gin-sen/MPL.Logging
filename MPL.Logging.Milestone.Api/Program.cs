@@ -1,16 +1,12 @@
-using Elastic.Apm.SerilogEnricher;
-using Elastic.CommonSchema.Serilog;
 using Azure.Data.Tables;
+using Microsoft.Extensions.Azure;
 using MPL.Logging;
 using MPL.Logging.Extensions;
-using MPL.Logging.Milestone.Api.Enrichers;
 using Serilog;
-using Microsoft.Extensions.Azure;
-using Serilog.Context;
 
 
-Log.Logger = CustomLoggerFactory.CreateLogger();
-//using (LogContext.PushProperty("Logtype", "technique"))
+//Log.Logger = CustomLoggerFactory.CreateCustomLogger();
+Log.Logger = CustomLoggerFactory.CreateCustomBootstrapLogger();
 
 try
 {
@@ -18,19 +14,15 @@ try
 
   var builder = WebApplication.CreateBuilder(args);
 
-
   builder.AddCustomLogger(Log.Logger);
-
 
   builder.Services.AddHealthChecks();
   builder.Services.AddControllers();
 
-
-  //builder.Services.AddAzureClients(clientBuilder =>
-  //{
-  //  clientBuilder.AddTableServiceClient(builder.Configuration["ConnectionStrings:Storage"]);
-  //});
-
+  builder.Services.AddAzureClients(clientBuilder =>
+  {
+    clientBuilder.AddTableServiceClient(builder.Configuration["ConnectionStrings:Storage"]);
+  });
 
   if (builder.Environment.IsDevelopment())
   {
@@ -49,6 +41,9 @@ try
 
   app.UseHealthChecks("/health");
   app.MapControllers();
+
+  TableServiceClient tableServiceClient = app.Services.GetRequiredService<TableServiceClient>();
+  await tableServiceClient.CreateTableIfNotExistsAsync("Dummy");
 
   app.Run();
 }

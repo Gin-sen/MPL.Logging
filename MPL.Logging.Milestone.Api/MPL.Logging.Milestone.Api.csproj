@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MPL.Logging.Milestone.Infrastructure\MPL.Logging.Milestone.Infrastructure.csproj" />
     <ProjectReference Include="..\MPL.Logging\MPL.Logging.csproj" />
   </ItemGroup>
 

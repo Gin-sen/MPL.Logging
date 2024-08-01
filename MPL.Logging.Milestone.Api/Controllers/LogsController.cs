@@ -18,7 +18,14 @@ namespace MPL.Logging.Milestone.Api.Controllers
     [HttpGet(Name = "GetOK")]
     public IActionResult GetOK()
     {
-      return Ok("null");
+      if (_logger.IsEnabled(LogLevel.Information))
+      {
+        using (LogContext.PushProperty("LogType", "metier"))
+        {
+          _logger.LogInformation("Getting OK");
+        }
+      }
+      return Ok();
     }
   }
 }
