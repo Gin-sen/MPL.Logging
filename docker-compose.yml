@@ -1,0 +1,16 @@
+services:
+  mpl.logging.milestone.api:
+    image: ${DOCKER_REGISTRY-}mplloggingmilestoneapi
+    build:
+      context: .
+      dockerfile: MPL.Logging.Milestone.Api/Dockerfile
+
+  mpl.logging.milestone.worker:
+    image: ${DOCKER_REGISTRY-}mplloggingmilestoneworker
+    build:
+      context: .
+      dockerfile: MPL.Logging.Milestone.Worker/Dockerfile
+
+
+  my-azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
