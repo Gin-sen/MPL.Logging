@@ -5,8 +5,7 @@ using MPL.Logging.Extensions;
 using Serilog;
 
 
-//Log.Logger = CustomLoggerFactory.CreateCustomLogger();
-Log.Logger = CustomLoggerFactory.CreateCustomBootstrapLogger();
+Log.Logger = CustomLoggerFactory.CreateCustomBootstrapLogger(configuration);
 
 try
 {
@@ -14,7 +13,7 @@ try
 
   var builder = WebApplication.CreateBuilder(args);
 
-  builder.AddCustomLogger(Log.Logger);
+  builder.AddCustomLogger();
 
   builder.Services.AddHealthChecks();
   builder.Services.AddControllers();

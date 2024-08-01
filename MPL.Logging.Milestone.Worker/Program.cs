@@ -9,9 +9,9 @@ try
 {
   Log.Information("Starting web application");
   var builder = Host.CreateApplicationBuilder(args);
-  builder.AddCustomLogger(Log.Logger);
+  builder.AddCustomLogger();
 
-  builder.Services.AddHealthChecks();
+  //builder.Services.AddHealthChecks();
   builder.Services.AddHostedService<Worker>();
 
   var host = builder.Build();
