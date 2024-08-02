@@ -1,16 +1,9 @@
 using Azure.Data.Tables;
 using Microsoft.Extensions.Azure;
-using MPL.Logging;
 using MPL.Logging.Extensions;
 using Serilog;
-
-
-Log.Logger = CustomLoggerFactory.CreateCustomBootstrapLogger(configuration);
-
 try
 {
-  Log.Information("Starting web application");
-
   var builder = WebApplication.CreateBuilder(args);
 
   builder.AddCustomLogger();
@@ -41,14 +34,29 @@ try
   app.UseHealthChecks("/health");
   app.MapControllers();
 
+  ILogger<Program> logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+  if (logger.IsEnabled(LogLevel.Information))
+    logger.LogInformation("Initialisation");
+
+  if (logger.IsEnabled(LogLevel.Debug))
+    logger.LogDebug("Ensure Azure Table \"Dummy\" is created");
+
   TableServiceClient tableServiceClient = app.Services.GetRequiredService<TableServiceClient>();
   await tableServiceClient.CreateTableIfNotExistsAsync("Dummy");
+  
+  if (logger.IsEnabled(LogLevel.Debug))
+    logger.LogDebug("Table \"Dummy\" exists or has been created");
+
+  if (logger.IsEnabled(LogLevel.Information))
+    logger.LogInformation("Starting web application");
 
   app.Run();
 }
 catch (Exception ex)
 {
-  Log.Fatal(ex, "Application terminated unexpectedly");
+  if (Log.IsEnabled(Serilog.Events.LogEventLevel.Fatal))
+    Log.Fatal(ex, "Application terminated unexpectedly");
 }
 finally
 {

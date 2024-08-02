@@ -1,4 +1,5 @@
-﻿using Azure.Data.Tables;
+﻿using Azure;
+using Azure.Data.Tables;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MPL.Logging.Milestone.Infrastructure.Entities;
@@ -12,40 +13,79 @@ namespace MPL.Logging.Milestone.Api.Controllers
   public class DummyController : ControllerBase
   {
     private readonly ILogger<DummyController> _logger;
-    public DummyController(ILogger<DummyController> logger, TableServiceClient tableServiceClient)
+    public DummyController(
+      ILogger<DummyController> logger,
+      TableServiceClient tableServiceClient)
     {
       _logger = logger;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> PostItem([FromServices] TableServiceClient tableServiceClient, [FromQuery] string partitionKey, [FromQuery] string rowkey, [FromQuery] string thing)
+    [HttpPost("PostItem")]
+    public async Task<IActionResult> PostItemAsync(
+      [FromServices] TableServiceClient tableServiceClient, 
+      [FromQuery] string partitionKey,
+      [FromQuery] string rowkey,
+      [FromQuery] string thing,
+      CancellationToken cancellationToken)
     {
       var table = tableServiceClient.GetTableClient("Dummy");
       DummyEntity entity = new DummyEntity(partitionKey, rowkey, thing);
-      await table.AddEntityAsync<DummyEntity>(entity);
-      if (_logger.IsEnabled(LogLevel.Information))
+      try
       {
-        using (LogContext.PushProperty("LogType", "metier"))
+        await table.AddEntityAsync<DummyEntity>(entity, cancellationToken);
+        if (_logger.IsEnabled(LogLevel.Information))
         {
-          _logger.LogInformation("1 Dummy created");
+          using (LogContext.PushProperty("LogType", "metier"))
+          {
+            _logger.LogInformation("1 Dummy created");
+          }
+        }
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+          _logger.LogDebug("Dummy : {@Dummy}", entity);
         }
       }
-      if (_logger.IsEnabled(LogLevel.Debug))
+      catch (RequestFailedException ex)
       {
-        _logger.LogDebug("Dummy : {@Dummy}", entity);
+        if (_logger.IsEnabled(LogLevel.Error))
+        {
+          _logger.LogError("Exception : {@Exception}", ex);
+        }
+        throw;
       }
       return Created($"/test?partitionKey={partitionKey}&rowKey={rowkey}", new { PartitionKey = partitionKey, RowKey = rowkey, Thing = thing });
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetItem([FromServices] TableServiceClient tableServiceClient, [FromQuery] string partitionKey, [FromQuery] string rowkey)
+    [HttpGet("GetItem")]
+    public async Task<IActionResult> GetItemAsync(
+      [FromServices] TableServiceClient tableServiceClient,
+      [FromQuery] string partitionKey,
+      [FromQuery] string rowkey,
+      CancellationToken cancellationToken)
     {
       var table = tableServiceClient.GetTableClient("Dummy");
-      var result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey);
+      var result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey, default, cancellationToken);
       if (_logger.IsEnabled(LogLevel.Debug))
       {
         _logger.LogDebug("Dummy : {@Dummy}", result);
       }
+      return Ok(result.Value);
+    }
+
+    [HttpDelete("DeleteItem")]
+    public async Task<IActionResult> DeleteItemAsync(
+      [FromServices] TableServiceClient tableServiceClient,
+      [FromQuery] string partitionKey,
+      [FromQuery] string rowkey,
+      CancellationToken cancellationToken)
+    {
+      var table = tableServiceClient.GetTableClient("Dummy");
+      var result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey, default, cancellationToken);
+      if (_logger.IsEnabled(LogLevel.Debug))
+      {
+        _logger.LogDebug("Dummy : {@Dummy}", result);
+      }
+      await table.DeleteEntityAsync(partitionKey, rowkey, default, cancellationToken);
       return Ok(result.Value);
     }
   }

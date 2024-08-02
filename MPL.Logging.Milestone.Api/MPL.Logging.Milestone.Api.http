@@ -1,6 +1,31 @@
-@Api_HostAddress = http://localhost:5106
+@Api_HostAddress = http://localhost:56999
 
 GET {{Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{Api_HostAddress}}/api/Logs/GetOK
+Accept: application/json
+
+###
+
+GET {{Api_HostAddress}}/api/Logs/Throw
+Accept: application/json
+
+###
+
+Post {{Api_HostAddress}}/api/Dummy/PostItem?partitionKey=test&rowkey=machin&thing=truc
+Accept: application/json
+
+###
+
+GET {{Api_HostAddress}}/api/Dummy/GetItem?partitionKey=test&rowkey=machin
+Accept: application/json
+
+###
+
+DELETE {{Api_HostAddress}}/api/Dummy/DeleteItem?partitionKey=test&rowkey=machin
 Accept: application/json
 
 ###

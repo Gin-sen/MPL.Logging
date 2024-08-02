@@ -17,17 +17,22 @@ namespace MPL.Logging.Extensions
     /// <returns></returns>
     public static IHostApplicationBuilder AddCustomLogger(this IHostApplicationBuilder builder)
     {
-      builder.Services.AddSerilog((services, lc) => lc
-        .ReadFrom.Configuration(builder.Configuration)
-        .Enrich.WithElasticApmCorrelationInfo()
-        .Enrich.FromLogContext()
-        .Enrich.With(new TechnicalEnricher())
-        .WriteTo.Console(new EcsTextFormatter(new EcsTextFormatterConfiguration
-        {
-          IncludeHost = false,
-          IncludeProcess = false,
-          IncludeUser = false,
-        })));
+      builder.Services.AddSerilog((services, lc) =>
+      {
+        lc.ReadFrom.Configuration(builder.Configuration)
+          .Enrich.With(new TechnicalEnricher())
+          .Enrich.FromLogContext();
+        if (builder.Environment.IsDevelopment())
+          lc.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {LogType}] {Message:lj} {NewLine}{Exception}");
+        else
+          lc.Enrich.WithElasticApmCorrelationInfo()
+            .WriteTo.Console(new EcsTextFormatter(new EcsTextFormatterConfiguration
+            {
+              IncludeHost = false,
+              IncludeProcess = false,
+              IncludeUser = false,
+            }));
+      });
       if (!builder.Environment.IsDevelopment())
         builder.Services.AddAllElasticApm();
 
