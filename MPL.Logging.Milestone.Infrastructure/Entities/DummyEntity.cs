@@ -5,11 +5,11 @@ namespace MPL.Logging.Milestone.Infrastructure.Entities
 {
   public class DummyEntity : ITableEntity
   {
-    public string PartitionKey { get; set; }
-    public string RowKey { get; set; }
+    public string? PartitionKey { get; set; }
+    public string? RowKey { get; set; }
     public DateTimeOffset? Timestamp { get; set; }
     public ETag ETag { get; set; }
-    public string Thing { get; set; }
+    public string? Thing { get; set; }
 
     public DummyEntity() { }
 

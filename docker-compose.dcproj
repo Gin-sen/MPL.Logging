@@ -9,11 +9,17 @@
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>mpl.logging.milestone.api</DockerServiceName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <ItemGroup>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include=".env" />
+    <None Include="elastic\filebeat.yml" />
+    <None Include="elastic\kibana.yml" />
+    <None Include="elastic\logstash.conf" />
+    <None Include="elastic\metricbeat.yml" />
   </ItemGroup>
 </Project>

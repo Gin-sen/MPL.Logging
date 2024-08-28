@@ -1,10 +1,12 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MPL.Logging.Milestone.Infrastructure.Entities;
 using Serilog.Context;
 using SharpCompress.Common;
+using System.Net;
 
 namespace MPL.Logging.Milestone.Api.Controllers
 {
@@ -44,6 +46,7 @@ namespace MPL.Logging.Milestone.Api.Controllers
         {
           _logger.LogDebug("Dummy : {@Dummy}", entity);
         }
+        return Created($"/test?partitionKey={partitionKey}&rowKey={rowkey}", new { PartitionKey = partitionKey, RowKey = rowkey, Thing = thing });
       }
       catch (RequestFailedException ex)
       {
@@ -51,9 +54,8 @@ namespace MPL.Logging.Milestone.Api.Controllers
         {
           _logger.LogError("Exception : {@Exception}", ex);
         }
-        throw;
+        return Problem("Something went wrong");
       }
-      return Created($"/test?partitionKey={partitionKey}&rowKey={rowkey}", new { PartitionKey = partitionKey, RowKey = rowkey, Thing = thing });
     }
 
     [HttpGet("GetItem")]
@@ -64,12 +66,31 @@ namespace MPL.Logging.Milestone.Api.Controllers
       CancellationToken cancellationToken)
     {
       var table = tableServiceClient.GetTableClient("Dummy");
-      var result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey, default, cancellationToken);
-      if (_logger.IsEnabled(LogLevel.Debug))
+      try
       {
-        _logger.LogDebug("Dummy : {@Dummy}", result);
+        Azure.Response<DummyEntity> result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey, default, cancellationToken);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+          _logger.LogDebug("Dummy : {@Dummy}", result);
+        }
+        return Ok(result.Value);
       }
-      return Ok(result.Value);
+      catch (RequestFailedException ex) when (ex.Status.Equals((int)HttpStatusCode.NotFound))
+      {
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+          _logger.LogDebug("Dummy not found");
+        }
+        return NotFound();
+      }
+      catch (RequestFailedException ex)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+        {
+          _logger.LogError("Something wrong happened while getting the entity in Azure Table :\n{@Exception}", ex);
+        }
+        return Problem("Something went wrong");
+      }
     }
 
     [HttpDelete("DeleteItem")]
@@ -80,13 +101,43 @@ namespace MPL.Logging.Milestone.Api.Controllers
       CancellationToken cancellationToken)
     {
       var table = tableServiceClient.GetTableClient("Dummy");
-      var result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey, default, cancellationToken);
-      if (_logger.IsEnabled(LogLevel.Debug))
+      try
       {
-        _logger.LogDebug("Dummy : {@Dummy}", result);
+        Azure.Response<DummyEntity> result = await table.GetEntityAsync<DummyEntity>(partitionKey, rowkey, default, cancellationToken);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+          _logger.LogDebug("Dummy : {@Dummy}", result);
+        }
+        try
+        {
+          await table.DeleteEntityAsync(partitionKey, rowkey, default, cancellationToken);
+          return Ok(result.Value);
+        }
+        catch (RequestFailedException ex)
+        {
+          if (_logger.IsEnabled(LogLevel.Error))
+          {
+            _logger.LogError("Something wrong happened while deleting the entity in Azure Table :\n{@Exception}", ex);
+          }
+          return Problem("Something went wrong");
+        }
       }
-      await table.DeleteEntityAsync(partitionKey, rowkey, default, cancellationToken);
-      return Ok(result.Value);
+      catch (RequestFailedException ex) when(ex.Status.Equals((int) HttpStatusCode.NotFound))
+      {
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+          _logger.LogInformation("Dummy not found");
+        }
+        return NotFound();
+      }
+      catch (RequestFailedException ex)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+        {
+          _logger.LogError("Something wrong happened while getting the entity in Azure Table :\n{@Exception}", ex);
+        }
+        return Problem("Something went wrong");
+      }
     }
   }
 }

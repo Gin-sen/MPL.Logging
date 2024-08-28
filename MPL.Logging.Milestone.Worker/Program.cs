@@ -1,20 +1,16 @@
-using MPL.Logging;
 using MPL.Logging.Extensions;
 using MPL.Logging.Milestone.Worker;
 using Serilog;
 
-Log.Logger = CustomLoggerFactory.CreateCustomBootstrapLogger();
-
 try
 {
-  Log.Information("Starting web application");
   var builder = Host.CreateApplicationBuilder(args);
   builder.AddCustomLogger();
 
   //builder.Services.AddHealthChecks();
   builder.Services.AddHostedService<Worker>();
 
-  var host = builder.Build();
+  using var host = builder.Build();
   host.Run();
 }
 catch (Exception ex)

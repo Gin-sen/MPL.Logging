@@ -1,5 +1,6 @@
 using Azure.Data.Tables;
 using Microsoft.Extensions.Azure;
+using MPL.Logging.ExceptionHandlers;
 using MPL.Logging.Extensions;
 using Serilog;
 try
@@ -8,27 +9,35 @@ try
 
   builder.AddCustomLogger();
 
+  builder.Services.AddExceptionHandler<LogExceptionHandler>();
+
   builder.Services.AddHealthChecks();
   builder.Services.AddControllers();
+  builder.Services.AddProblemDetails();
 
   builder.Services.AddAzureClients(clientBuilder =>
   {
-    clientBuilder.AddTableServiceClient(builder.Configuration["ConnectionStrings:Storage"]);
+    clientBuilder.AddTableServiceClient(builder.Configuration["ConnectionStrings:Storage"] ?? "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://localhost:10000/devstoreaccount1;QueueEndpoint=http://localhost:10001/devstoreaccount1;TableEndpoint=http://localhost:10002/devstoreaccount1;");
   });
 
-  if (builder.Environment.IsDevelopment())
+  if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName.Equals("Docker"))
   {
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
   }
   var app = builder.Build();
 
-  if (app.Environment.IsDevelopment())
+  app.UseExceptionHandler();
+  app.UseStatusCodePages();
+
+  if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName.Equals("Docker"))
   {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
   }
 
+  //app.UseHttpLogging();
   app.UseAuthorization();
 
   app.UseHealthChecks("/health");
@@ -43,15 +52,30 @@ try
     logger.LogDebug("Ensure Azure Table \"Dummy\" is created");
 
   TableServiceClient tableServiceClient = app.Services.GetRequiredService<TableServiceClient>();
-  await tableServiceClient.CreateTableIfNotExistsAsync("Dummy");
-  
-  if (logger.IsEnabled(LogLevel.Debug))
-    logger.LogDebug("Table \"Dummy\" exists or has been created");
+  Azure.Response tableCreationResponse = (await tableServiceClient.CreateTableIfNotExistsAsync("Dummy")).GetRawResponse();
+  if (tableCreationResponse.Status == 204)
+  {
+    if (logger.IsEnabled(LogLevel.Debug))
+    {
+      logger.LogDebug("Table \"Dummy\" has been created");
+    }
+  }
+  else if (tableCreationResponse.Status == 409)
+  {
+    if (logger.IsEnabled(LogLevel.Debug))
+    {
+      logger.LogDebug("Table \"Dummy\" already exists");
+    }
+  }
+  else
+  {
+    throw new Exception("There was a problem during creation of the \"Dummy\" Table");
+  }
 
   if (logger.IsEnabled(LogLevel.Information))
     logger.LogInformation("Starting web application");
 
-  app.Run();
+  await app.RunAsync();
 }
 catch (Exception ex)
 {

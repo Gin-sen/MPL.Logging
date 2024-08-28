@@ -37,7 +37,7 @@ namespace MPL.Logging.Milestone.Api.Controllers
     }
 
     [HttpGet(Name = "Throw")]
-    public async Task<IActionResult> ThrowAsync([FromQuery]int delayInSec = 1)
+    public async Task ThrowAsync([FromQuery]int delayInSec = 1)
     {
       try
       {
@@ -50,8 +50,8 @@ namespace MPL.Logging.Milestone.Api.Controllers
         {
           _logger.LogError("Exception : {@Exception}", ex);
         }
+        throw;
       }
-      return Ok();
     }
   }
 }

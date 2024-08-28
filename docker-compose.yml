@@ -13,3 +13,24 @@ services:
 
   my-azurite:
     image: mcr.microsoft.com/azure-storage/azurite
+    
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+
+  metricbeat01:
+    image: docker.elastic.co/beats/metricbeat:${STACK_VERSION}
+
+  filebeat01:
+    image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
+
+  logstash01:
+    image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
+
+  fleet-server:
+    image: docker.elastic.co/beats/elastic-agent:${STACK_VERSION}

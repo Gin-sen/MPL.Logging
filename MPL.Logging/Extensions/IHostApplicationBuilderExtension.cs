@@ -1,7 +1,7 @@
-﻿using Elastic.Apm.SerilogEnricher;
-using Elastic.CommonSchema.Serilog;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿  using Elastic.Apm.SerilogEnricher;
+  using Elastic.CommonSchema.Serilog;
+  using Microsoft.Extensions.DependencyInjection;
+  using Microsoft.Extensions.Hosting;
 using MPL.Logging.Enrichers;
 using Serilog;
 

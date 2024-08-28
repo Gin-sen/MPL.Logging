@@ -3,9 +3,36 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "mpl.logging.milestone.api",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "serviceActions": {
         "mpl.logging.milestone.api": "StartDebugging",
-        "mpl.logging.milestone.worker": "StartDebugging"
+        "mpl.logging.milestone.worker": "StartDebugging",
+        "my-azurite": "StartWithoutDebugging",
+        "es01": "DoNotStart",
+        "filebeat01": "DoNotStart",
+        "fleet-server": "DoNotStart",
+        "kibana": "DoNotStart",
+        "logstash01": "DoNotStart",
+        "metricbeat01": "DoNotStart",
+        "setup": "DoNotStart"
+      }
+    },
+    "ELK": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "es01": "StartWithoutDebugging",
+        "filebeat01": "StartWithoutDebugging",
+        "fleet-server": "StartWithoutDebugging",
+        "kibana": "StartWithoutDebugging",
+        "logstash01": "StartWithoutDebugging",
+        "metricbeat01": "StartWithoutDebugging",
+        "mpl.logging.milestone.api": "DoNotStart",
+        "mpl.logging.milestone.worker": "DoNotStart",
+        "my-azurite": "DoNotStart",
+        "setup": "StartWithoutDebugging"
       }
     }
   }
