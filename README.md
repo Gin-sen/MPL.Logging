@@ -26,7 +26,7 @@ Lancer la commande :
 Aller sur https://localhost:5601 (elastic / changeme)
 Aller sur la page Fleet > Settings > Output > Cliquer sur modifier
 
-Lancer la commande : `docker cp <projet-docker-compose>-es01-1:/usr/share/elasticsearch/config/certs/ca/ca.crt .`
+Lancer la commande : `docker cp $(docker ps -f 'name=es01' --format '{{.Names}}'):/usr/share/elasticsearch/config/certs/ca/ca.crt .`
 Lancer la commande et copiez le resultat : `openssl x509 -fingerprint -sha256 -noout -in ca.crt | awk -F"=" {' print $2 '} | sed s/://g`
 Lancer la commande et copiez le resultat : `cat ca.crt`
 
