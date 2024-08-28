@@ -7,7 +7,7 @@ try
 {
   var builder = WebApplication.CreateBuilder(args);
 
-  builder.AddCustomLogger();
+  builder.AddDefaultLogStack();
 
   builder.Services.AddExceptionHandler<LogExceptionHandler>();
 

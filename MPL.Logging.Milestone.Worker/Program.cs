@@ -5,7 +5,7 @@ using Serilog;
 try
 {
   var builder = Host.CreateApplicationBuilder(args);
-  builder.AddCustomLogger();
+  builder.AddDefaultLogStack();
 
   //builder.Services.AddHealthChecks();
   builder.Services.AddHostedService<Worker>();
