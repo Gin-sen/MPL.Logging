@@ -1,3 +1,5 @@
+using Elastic.Apm.Api;
+
 namespace MPL.Logging.Milestone.Worker
 {
   public class Worker : BackgroundService
@@ -13,11 +15,31 @@ namespace MPL.Logging.Milestone.Worker
     {
       while (!stoppingToken.IsCancellationRequested)
       {
-        if (_logger.IsEnabled(LogLevel.Debug))
+
+        var transaction = Elastic.Apm.Agent
+          .Tracer.StartTransaction("SendMailCommerce", ApiConstants.TypeMessaging);
+
+        try
         {
-          _logger.LogDebug("Worker running at: {time}", DateTimeOffset.Now);
+          if (_logger.IsEnabled(LogLevel.Debug))
+          {
+            _logger.LogDebug("Worker running at: {time}", DateTimeOffset.Now);
+          }
+          await Task.Delay(1_000 * 30, stoppingToken);
         }
-        await Task.Delay(1_000, stoppingToken);
+        catch (Exception ex)
+        {
+          transaction.CaptureException(ex);
+          if (_logger.IsEnabled(LogLevel.Debug))
+          {
+            _logger.LogDebug("Worker running at: {time}", DateTimeOffset.Now);
+            _logger.Log(LogLevel.Information,"Worker running at: {time}", DateTimeOffset.Now);
+          }
+        }
+        finally
+        {
+          transaction.End();
+        }
       }
     }
   }

@@ -23,6 +23,15 @@ Lancer la commande :
 
 ## Activer les APM
 
+### Methode automatique
+
+yq est nécessaire pour l'exécution du script.
+
+Executez le script `./init_apm_server.yaml` pour configurer le server APM.
+
+
+### Methode manuelle
+
 Aller sur https://localhost:5601 (elastic / changeme)
 Aller sur la page Fleet > Settings > Output > Cliquer sur modifier
 
@@ -43,6 +52,7 @@ ssl:
     .......
     ......
 ```
+
 - sauvegardez, vous pouvez maintenant utiliser les APM sur votre cluster local (url: http://fleet-server:8220, token: supersecrettoken).
 
 ## Ajouter une dataview pour les logs filebeat

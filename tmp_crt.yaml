@@ -1,0 +1,6 @@
+ssl:
+  certificate_authorities:
+    - |-
+      -----BEGIN CERTIFICATE-----
+      CHANGEME
+      -----END CERTIFICATE-----
