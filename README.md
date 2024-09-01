@@ -57,6 +57,15 @@ ssl:
 
 ## Ajouter une dataview pour les logs filebeat
 
+### Methode automatique
+
+Lancer le script `./init_filebeat_dataview.sh` pour créer la dataview pour les logs filebeat.
+
+Il faudra appliquer des filtres pour avoir un résultat propre.
+
+
+### Methode manuelle
+
 Aller dans Discover, cliquer sur les dataviews en haut a gauche et sélectionner "créer une dataview".
 
 Nommer la dataview `filebeat` et renseignez `filebeat*` dans le champ de pattern, sauvegarder.
