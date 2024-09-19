@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Maxime Places",
+  "classifications": [ "Logging", "Api", "Worker", "Milestone" ],
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "identity": "Net8.Ginsen.Template",
+  "name": "Net8.Ginsen.Template",
+  "shortName": "my-ddd-api",
+  "sourceName": "MPL.Logging",
+  "defaultName": "Net8.Ginsen.Template",
+  "preferNameDirectory": true,
+  "guids": [
+    "C6F1B943-CAF1-43D6-97D6-641C0B0265A6",
+    "5175279F-FF29-4CB7-8B79-9C219FBE504C",
+    "C71A3350-DBAC-4F3A-ACA0-CC5734823EFD",
+    "F1255A31-E91C-4185-8EC8-1C1B417B8F71",
+    "8DF95EF0-96F1-492E-A270-902656B7C26A",
+    "BA905BF4-B3F7-4AC6-9730-9B3AE70B9796"
+  ],
+  "symbols": {
+    "includeTest": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true"
+    },
+    "fullNameDockerService": {
+      "type": "derived",
+      "valueSource": "name", // name -> pointe sur le nom du nouveau projet
+      "valueTransform": "lc",
+      "replaces": "my.ddd.cqrs.temp6"
+    },
+    "fullNameDockerImage": {
+      "type": "derived",
+      "valueSource": "name", // name -> pointe sur le nom du nouveau projet
+      "valueTransform": "chainedImage",
+      "replaces": "mydddcqrstemp6"
+    },
+    "chartFolderRename": {
+      "type": "derived",
+      "valueSource": "name",
+      "valueTransform": "chainedFolder",
+      "fileRename": "my-ddd-cqrs-temp6-api"
+    }
+  },
+  "forms": {
+    "chainedImage": {
+      "identifier": "chain",
+      "steps": [ "dotToNull", "lc" ] // An array of names of other transformations (applied in the order they appear in the array)
+    },
+    "dotToNull": {
+      "identifier": "replace",
+      "pattern": "\\.", // A regular expression matching the characters to replace
+      "replacement": "" // The replacement for the matched characters
+    },
+    "chainedFolder": {
+      "identifier": "chain",
+      "steps": [ "dotToDash", "lc" ]
+    },
+    "dotToDash": {
+      "identifier": "replace",
+      "pattern": "\\.",
+      "replacement": "-"
+    },
+    "lc": {
+      "identifier": "lowerCase"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!includeTest)",
+          "exclude": [ "*.Tests/**/*" ]
+        },
+        {
+          "exclude": [
+            "**/[Bb]in/**",
+            "**/[Oo]bj/**",
+            ".template.config/**/*",
+            "**/*.lock.json",
+            "**/.vs/**",
+            "**/.git/**"
+          ]
+        }
+      ]
+    }
+  ]
+}
