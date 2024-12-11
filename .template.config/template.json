@@ -1,16 +1,16 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "Maxime Places",
-  "classifications": [ "Logging", "Api", "Worker", "Milestone" ],
+  "classifications": [ "Package", "Logging", "Api", "Worker", "Milestone" ],
   "tags": {
     "language": "C#",
     "type": "solution"
   },
-  "identity": "Net8.Ginsen.Template",
-  "name": "Net8.Ginsen.Template",
-  "shortName": "my-ddd-api",
+  "identity": "Net8.Ginsen.LoggingPackage.Template",
+  "name": "Net8.Ginsen.LoggingPackage.Template",
+  "shortName": "my-logging-package",
   "sourceName": "MPL.Logging",
-  "defaultName": "Net8.Ginsen.Template",
+  "defaultName": "Net8.Ginsen.LoggingPackage.Template",
   "preferNameDirectory": true,
   "guids": [
     "C6F1B943-CAF1-43D6-97D6-641C0B0265A6",

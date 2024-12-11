@@ -70,3 +70,16 @@ Aller dans Discover, cliquer sur les dataviews en haut a gauche et sélectionner
 
 Nommer la dataview `filebeat` et renseignez `filebeat*` dans le champ de pattern, sauvegarder.
 
+## Utiliser le templating de dotnet
+
+Pour installer cette solution en tant que template, lancer la commande dans le dossier racine du projet :
+
+```bash
+dotnet new install .
+```
+
+Pour créer un projet en utilisant cette template :
+
+```bash
+dotnet new my-logging-package -in=false -n My.New.Solution
+```
