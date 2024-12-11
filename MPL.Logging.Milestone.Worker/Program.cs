@@ -7,7 +7,7 @@ try
   var builder = Host.CreateApplicationBuilder(args);
   builder.AddDefaultLogStack();
 
-  //builder.Services.AddHealthChecks();
+  // builder.Services.AddHealthChecks();
   builder.Services.AddHostedService<Worker>();
 
   using var host = builder.Build();

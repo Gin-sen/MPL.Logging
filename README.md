@@ -2,12 +2,12 @@
 
 # Prise en compte de l'environnement
 
-Le package de log et l'API devraient être configuré pour ne pas activer les APM et les logs au format ECS (json) en mode Development.
+Le package de log et l'API devraient Ãªtre configurÃ© pour ne pas activer les APM et les logs au format ECS (json) en mode Development.
 
 Env :
 - Development                  Pas d'APM, pas de logs au format ECS 
-- Docker                       APM et logs au format ECS pour des raison de developpement du package (TODO: voir si ca peut se régler a coup de directives de pre-processor (#if DEBUG))
-- Inté, Recette, Autre, ...    APM + logs au format ECS 
+- Docker                       APM et logs au format ECS pour des raison de developpement du package (TODO: voir si ca peut se rÃ©gler a coup de directives de pre-processor (#if DEBUG))
+- IntÃ©, Recette, Autre, ...    APM + logs au format ECS 
 
 # Mise en place du cluster ELK local
 
@@ -25,7 +25,7 @@ Lancer la commande :
 
 ### Methode automatique
 
-yq est nécessaire pour l'exécution du script.
+yq est nÃ©cessaire pour l'exÃ©cution du script.
 
 Executez le script `./init_apm_server.yaml` pour configurer le server APM.
 
@@ -42,7 +42,7 @@ Lancer la commande et copiez le resultat : `cat ca.crt`
 Dans l'interface de Kibana :
 - modifier http://localhost:9200 en https://es01:9200
 - coller le resultat de la commande openssl
-- coller ce yaml dans la partie finale de la configuration et y ajouter le certificat (résultat de la commande cat) :
+- coller ce yaml dans la partie finale de la configuration et y ajouter le certificat (rÃ©sultat de la commande cat) :
 
 ```yaml
 ssl:
@@ -59,14 +59,14 @@ ssl:
 
 ### Methode automatique
 
-Lancer le script `./init_filebeat_dataview.sh` pour créer la dataview pour les logs filebeat.
+Lancer le script `./init_filebeat_dataview.sh` pour crÃ©er la dataview pour les logs filebeat.
 
-Il faudra appliquer des filtres pour avoir un résultat propre.
+Il faudra appliquer des filtres pour avoir un rÃ©sultat propre.
 
 
 ### Methode manuelle
 
-Aller dans Discover, cliquer sur les dataviews en haut a gauche et sélectionner "créer une dataview".
+Aller dans Discover, cliquer sur les dataviews en haut a gauche et sÃ©lectionner "crÃ©er une dataview".
 
 Nommer la dataview `filebeat` et renseignez `filebeat*` dans le champ de pattern, sauvegarder.
 

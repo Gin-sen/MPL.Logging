@@ -3,6 +3,8 @@ services:
     depends_on:
       my-azurite:
         condition: service_started
+      fleet-server:
+        condition: service_started
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_HTTP_PORTS=8080
@@ -16,20 +18,18 @@ services:
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
       - "/:/hostfs:ro"
-    # volumes:
-    #   - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
 
   mpl.logging.milestone.worker:
     depends_on:
       my-azurite:
+        condition: service_started
+      fleet-server:
         condition: service_started
     environment:
       - DOTNET_ENVIRONMENT=Docker
       - ConnectionStrings__Storage=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://my-azurite:10000/devstoreaccount1;QueueEndpoint=http://my-azurite:10001/devstoreaccount1;TableEndpoint=http://my-azurite:10002/devstoreaccount1;
     # ports:
     #   - "8081:8080"
-    # volumes:
-    #   - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
     volumes:
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
